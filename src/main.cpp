@@ -65,11 +65,14 @@ void registerUnitInfoToServer()
 {
   String jsonPayload;
   StaticJsonDocument<96> doc;
+  // JsonObject detectorUnitDto = doc.createNestedObject("detectorUnitDto");
   doc["macAddress"] = WiFi.macAddress();
   doc["ipV4"] = WiFi.localIP();
   serializeJson(doc, jsonPayload);
   http.begin(client, ENDPOINT_URL + "/detector/new");
   Serial.println(ENDPOINT_URL + "/detector/new");
+  Serial.println(jsonPayload);
+  http.addHeader("Content-Type", "application/json");
   int httpCode = http.POST(jsonPayload);
   if (httpCode == HTTP_CODE_CREATED)
   {
@@ -81,7 +84,7 @@ bool getUnitInfoViaServer()
 {
   bool isSuccessful = false;
   Serial.println();
-  http.begin(client, ENDPOINT_URL + "/detector/" + WiFi.macAddress()); //HTTP
+  http.begin(client, ENDPOINT_URL + "/detector/" + WiFi.macAddress() + "?ipV4="+ WiFi.localIP().toString()); //HTTP
   Serial.println(ENDPOINT_URL + "/detector/" + WiFi.macAddress());
   int httpCode = http.GET();
 
